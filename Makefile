@@ -1,38 +1,43 @@
+# **************************************************************************** #
+#                                                                              #
+#                                                         :::      ::::::::    #
+#    Makefile                                           :+:      :+:    :+:    #
+#                                                     +:+ +:+         +:+      #
+#    By: sbhatta <sbhatta@student.42heilbronn.de    +#+  +:+       +#+         #
+#                                                 +#+#+#+#+#+   +#+            #
+#    Created: 2023/04/21 15:21:52 by sbhatta           #+#    #+#              #
+#    Updated: 2023/06/15 14:26:45 by sbhatta          ###   ########.fr        #
+#                                                                              #
+# **************************************************************************** #
+
 CC = cc
 CFLAGS = -Wextra -Werror -Wall
 AR = ar
 CRS = crs
-NAME = libft.a
+LIBFT_PATH = ./src/libft_ft
+LIBFT = $(LIBFT_PATH)/libft.a
+NAME = libftprintf.a
 
-SRC = ft_isalnum.c ft_isalpha.c ft_isdigit.c ft_isascii.c ft_isprint.c \
-		ft_memset.c ft_strlen.c ft_strlcat.c ft_strlcpy.c ft_tolower.c \
-		ft_toupper.c ft_strncmp.c ft_memchr.c ft_bzero.c ft_strchr.c \
-		ft_strrchr.c ft_calloc.c ft_strdup.c ft_memcpy.c ft_memmove.c \
-		ft_atoi.c ft_substr.c ft_strnstr.c ft_memcmp.c ft_strjoin.c \
-		ft_strtrim.c ft_split.c ft_itoa.c ft_strmapi.c ft_striteri.c \
-		ft_putchar_fd.c ft_putstr_fd.c ft_putendl_fd.c ft_putnbr_fd.c
-
+SRC = 	./src/ft_printf/ft_printf.c ./src/ft_printf/ft_print_hex.c ./src/ft_printf/ft_putnbr_long.c \
+		./src/ft_printf/ft_printf_char.c ./src/ft_printf/ft_printf_str.c ./src/ft_printf/ft_printf_ptr.c \
+		./src/ft_printf/ft_printf_count.c ./src/ft_printf/ft_printf_perc.c \
+		./src/get_next_line/get_next_line.c
 OBJ = $(SRC:.c=.o)
 
-BONUS_SRC = ft_lstadd_front.c ft_lstnew.c ft_lstadd_back.c ft_lstsize.c ft_lstlast.c ft_lstdelone.c ft_lstclear.c ft_lstiter.c ft_lstmap.c
-
-BONUS_OBJ = $(BONUS_SRC:.c=.o);
-
-all: $(NAME)
-
-$(NAME): $(OBJ)
-	$(AR) $(CRS) $@ $^
-
-bonus: $(BONUS_OBJ)
-	$(AR) $(CRS) $(NAME) $(BONUS_OBJ)
-
-%.o: %.c
-	$(CC) -c $(CFLAGS) -o $@ $< 
-
-clean: 	
-	rm -f $(OBJ) $(BONUS_OBJ)
+all:$(NAME)
+$(NAME): $(LIBFT) $(OBJ) 
+		@cp $(LIBFT) ./$(NAME)
+		$(AR) $(CRS) $(NAME) $(OBJ)
+$(LIBFT):
+		@make all -C $(LIBFT_PATH)
+%.o:%.c
+		$(CC) -c $(CFLAGS) -o $@ $<
+clean:
+		make -C $(LIBFT_PATH) clean
+		rm -f $(OBJ)
 fclean: clean
-	rm -f $(NAME)
-re:	fclean all
+		make -C $(LIBFT_PATH) fclean
+		rm -f $(NAME)
+re:		fclean all
 
-.PHONY:	all clean fclean re bonus
+.PHONY: all clean fclean re
